@@ -6,16 +6,13 @@ export const lightTheme = createTheme({
         mode: 'light',
         primary: {
             main: '#c7102e',
-
         }    
     },
     components: {
         MuiButton: {
             defaultProps:{
-                color: 'primary',
-                
+                color: 'primary',  
             },
-    
         },
         MuiTypography: {
             styleOverrides: {

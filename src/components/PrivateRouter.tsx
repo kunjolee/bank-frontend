@@ -1,17 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom"
+import { useAppSelector } from "../store"
 
-const auth = {
-  ok: false,
-}
+const PrivateRouter = ( ) => {
 
-interface Props {
-  children: JSX.Element
-}
+  const { auth } = useAppSelector((state)=> state.auth)
 
-const PrivateRouter = ({ children }: Props ) => {
-
-  return auth ? (
-    children
+  return auth?.ok ? (
+    <Outlet />
   ) : (
     <Navigate to='/login' />
   )
