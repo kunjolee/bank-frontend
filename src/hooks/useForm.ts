@@ -5,7 +5,6 @@ export const useForm = <T extends Object> (initState: T) => {
 
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-
         setForm({
             ...form,
             [e.target.name]: e.target.value

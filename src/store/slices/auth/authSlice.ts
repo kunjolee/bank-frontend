@@ -18,8 +18,11 @@ export const authSlice = createSlice({
         },
         setLogout: (state) => {
             state.auth = null;
+        },
+        setCreateUser: (state, action: PayloadAction<IAuth>) => {
+            state.auth = action.payload
         }
     }
 });
 
-export const { setLogin, setLogout } = authSlice.actions;
+export const { setCreateUser, setLogin, setLogout } = authSlice.actions;

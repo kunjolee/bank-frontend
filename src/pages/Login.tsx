@@ -63,11 +63,10 @@ const Login = () => {
           
               <Box>
                 <TextField
-                    color='secondary'
                     sx={{ width: '80%'}}
                     label='username'
                     name='username'
-                    helperText='You can type your email as well'
+                    helperText='insert your username'
                     value={ username }
                     error={ isTouched && username.length === 0 }
                     margin='normal'
@@ -76,7 +75,6 @@ const Login = () => {
                     required
                 />
                 <TextField
-                    color='secondary'
                     sx={{ width: '80%'}}
                     label='password'
                     name='pass'

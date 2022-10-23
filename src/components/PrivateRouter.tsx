@@ -3,12 +3,15 @@ import { useAppSelector } from "../store"
 
 const PrivateRouter = ( ) => {
 
-  const { auth } = useAppSelector((state)=> state.auth)
+  const { auth } = useAppSelector((state)=> state.auth);
 
-  return auth?.ok ? (
+  const localAuth = auth?.ok && localStorage.getItem('bootcam-token');
+
+  return localAuth ? (
     <Outlet />
   ) : (
     <Navigate to='/login' />
   )
 }
-export default PrivateRouter
+
+export default PrivateRouter;

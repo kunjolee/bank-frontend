@@ -1,11 +1,14 @@
 export interface IUser{
-    id: string,
+    id: string;
     name: string;
     username: string;
     email: string;
-    pass: string;
     address: string;
     phone: string;
     birthdate: string;
-    state: number;    
+    state: number;
 }   
+
+export interface CreateUserForm extends Omit<IUser, 'id' | 'state' >{
+    pass: string;
+}
