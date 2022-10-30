@@ -1,72 +1,60 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import Cookies from 'js-cookie';
 
-import { Box, Step, Stepper, useTheme, Button, IconButton, Typography, StepLabel } from '@mui/material';
+
+import { Box,useTheme, Button, IconButton, Typography, StepLabel, Grid, TextField, CircularProgress } from '@mui/material';
+
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { Additional, Authentication, Information } from '../components/CreateForm';
-import { useForm, useShowMessage } from '../hooks';
-import { CreateUserForm } from '../interfaces/User';
+import { useShowMessage } from '../hooks';
+import { IAuth, CreateUserForm } from '../interfaces';
 import { useAppDispatch } from '../store';
-import { createUserThunk } from '../store/slices/auth';
+import { createUserThunk, setLogin } from '../store/slices/auth';
+import { isEmail, isNumberText } from '../utils';
+import { api } from '../api/axios';
 
-
-const STEPS = ['AUTHENTICATION','USER INFORMATION', 'ADDITIONAL'];
 
 const CreateUser = () => {
 
   const theme = useTheme();
-  const [controlSteps, setControlSteps] = useState(2);
-
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
 
   const showMessage = useShowMessage();
 
-  const { form, handleChange } = useForm<CreateUserForm>({
-    username: '',
-    email: '',
-    pass: '',
-    name: '',
-    phone: '',
-    birthdate: '',
-    address: ''
-  });
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateUserForm>();
+  const [loading, setLoading] = useState(false);
 
-// auth: email , pass, username
-// user information: name, phone, birthdate
-// additional: address
+  const onSave = async (form: CreateUserForm) => {
+    
+    setLoading(true);
 
-  const nextStep = () => {
-
-    if ( controlSteps === 0) {
-      if (!form.username || !form.email || !form.pass) return;
-       
-
-    } else if ( controlSteps === 1) {
-      if (!form.name || !form.phone || !form.birthdate) return;
+    try {
+      const { data } = await api.post<IAuth>('/users', form);
       
-    } else if ( controlSteps === 2) {
-      if (!form.address) return;
+      dispatch(setLogin( data ));
+      showMessage('User saved successfully', 'success');
+      Cookies.set('token', data.token);
+      
+      navigate('/');
+      
+    } catch (error: any) {
+      
+      Cookies.remove('token');
+      
+      console.log('Create User error. Try later', error);
+      error.response.data.forEach((el:any)=>{
+        showMessage(el.msg, 'error');
+      });
+      
+    }finally{
 
-    } 
-
-    setControlSteps(prev => prev + 1);
-  }
-  
-  const onSave = () => {
-    setControlSteps(prev => prev + 1);
-
-    dispatch(createUserThunk({
-      form,
-      navigate,
-      showMessage
-    }));
-
-    setTimeout( () => {
-      navigate('/')
-    }, 3500)
+      setLoading(false);
+    }
+    
   }
 
   return (
@@ -108,42 +96,98 @@ const CreateUser = () => {
         <Typography variant='subtitle1'>
           Let's create your online bank user
         </Typography>
-        <Stepper sx={{ my: '2rem'}} activeStep={controlSteps} alternativeLabel >
-            {
-              STEPS.map(step => (
-                <Step key={ step }>
-                  <StepLabel>
-                    { step }
-                  </StepLabel>
-                </Step>
-              ))
-            }
-        </Stepper>
-
-        <Box m='4rem 0 2rem' textAlign='center'>
-          {
-            controlSteps === 0
-            ? <Authentication form={form} handleChange={handleChange} />
-            : controlSteps === 1 
-            ? <Information form={form} handleChange={handleChange} />
-            : controlSteps === 2
-              ? <Additional form={form} handleChange={handleChange} setControlSteps={setControlSteps}/>
-              : (
-                  <Typography m='10rem' variant='h2' component='h2' fontSize={60}>
-                     Welcome <span style={{ color: '#42ba96'}}>{form.username}!</span>
-                  </Typography>
-                )
-          }
-        </Box>
-        {
-          controlSteps > 0 && controlSteps < 3 && <Button onClick={() => setControlSteps((prev) => prev - 1)}>Back</Button>
-        }
-        {
-          controlSteps < 2 && <Button onClick={nextStep}>Next</Button>
-        }
-        {
-          controlSteps === 2 && <Button onClick={onSave} color='success'>Create User</Button>
-        }
+        <form onSubmit={ handleSubmit(onSave) } noValidate>
+          <Grid container spacing={5} my={'2rem'}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label='Name'
+                { ...register('name', {
+                  required: 'Name required',
+                  minLength: { value: 2, message: 'Name should be at least 2 characters'}
+                })}
+                error={ !!errors.name }
+                helperText={ errors.name?.message }
+                sx={{mb: '1rem'}}
+                />
+              <TextField
+                fullWidth
+                label='Username'
+                {
+                  ...register('username', {
+                    required: 'Username required',
+                    minLength: { value: 2, message: 'Username should be at least 2 characters'}
+                  })
+                }
+                error={ !!errors.username }
+                helperText={ errors.username?.message }
+                sx={{mb: '1rem'}}
+              />
+              <TextField
+                type='email'
+                fullWidth
+                label='Email address'
+                {...register('email', {
+                required: 'Email required',
+                validate: isEmail
+                })}
+                error={ !!errors.email  }
+                helperText={ errors.email?.message }
+                sx={{mb: '1rem'}}
+              />
+              <TextField
+                fullWidth
+                label='password'
+                type='password'
+                { ...register('pass', {
+                required: 'Password required',
+                minLength: { value: 6, message: 'Password should be at least 6 characters' }
+                }) }
+                error={ !!errors.pass }
+                helperText={ errors.pass?.message }
+                sx={{mb: '1rem'}}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+            <TextField
+                fullWidth
+                label='Phone'
+                { ...register('phone', {
+                  required: 'phone required',
+                  minLength: { value: 8, message: 'phone should be at least 8 characters'},
+                  validate: isNumberText
+                })}
+                error={ !!errors.phone }
+                helperText={ errors.phone?.message }
+                sx={{mb: '1rem'}}
+              />
+              <TextField
+                fullWidth
+                type='date'
+                {
+                  ...register('birthdate', {
+                    required: 'birthdate required',
+                  })
+                }
+                error={ !!errors.birthdate }
+                helperText={ errors.birthdate?.message }
+                sx={{mb: '1rem'}}
+              />
+              <TextField
+                fullWidth
+                label='Address'
+                {...register('address', {
+                required: 'Address required',
+                })}
+                error={ !!errors.address  }
+                helperText={ errors.address?.message }
+                sx={{mb: '1rem'}}
+              />
+            </Grid>
+          </Grid>
+          <Button fullWidth color='success' type='submit' >CREATE USER</Button>
+          <CircularProgress sx={{ display: loading ? 'flex' : 'none' }}/>
+        </form>
       </Box>
     </>
   )

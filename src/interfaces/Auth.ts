@@ -4,5 +4,5 @@ export interface IAuth {
     msg: string;
     ok: boolean;
     token: string;
-    user: IUser
+    user?: IUser
 }

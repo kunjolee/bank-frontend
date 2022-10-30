@@ -3,12 +3,9 @@ import { CreateUserForm } from '../../interfaces';
 import { Button, TextField } from '@mui/material';
 
 interface Props {
-  setControlSteps: Dispatch<SetStateAction<number>>;
-}
-
-interface Props {
   form: CreateUserForm
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  setControlSteps: Dispatch<SetStateAction<number>>;
 }
 
 export const Additional = ({ form, handleChange, setControlSteps }: Props ) => {

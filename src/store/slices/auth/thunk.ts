@@ -1,4 +1,5 @@
 import { NavigateFunction } from 'react-router-dom';
+import Cookies from 'js-cookie'
 import { VariantType } from 'notistack';
 
 import { AppThunk } from '../../store';
@@ -22,17 +23,17 @@ export const authLogin = ({ form, navigate, showMessage }: Props): AppThunk => {
             const { data } = await api.post<IAuth>('/auth', form); 
 
             dispatch(setError({ isError: false, message: '' }));
-
             
             dispatch(setLogin( data ));
             
-            localStorage.setItem('bootcam-token', data.token);
+            Cookies.set('token', data.token);
+
             showMessage(data.msg, 'success');
             navigate('/');
 
             
         } catch (error: any) {
-            
+            Cookies.remove('token')
             
             if (error.message === 'Network Error') {
 
@@ -54,8 +55,11 @@ export const authLogin = ({ form, navigate, showMessage }: Props): AppThunk => {
                     statusText: error.message
                 }));
 
-                dispatch(setLogout());
-                localStorage.clear();
+                dispatch(setLogout({
+                    msg: 'Logged out successfully',
+                    ok: false,
+                    token: ''
+                }));
 
                 showMessage(`Error: ${error.response.status}: ${error.response.data.msg}`, 'error')
             }
@@ -64,7 +68,7 @@ export const authLogin = ({ form, navigate, showMessage }: Props): AppThunk => {
 }
 
 
-export const createUserThunk = ({ showMessage, navigate }: Props):AppThunk => {
+export const createUserThunk = ({ showMessage, navigate, form }: Props):AppThunk => {
     // TODO: make this work, the createUser. now i have to validate the JWT
     // in the localstorage there is the token, now i have to validate that the token is removed from the local storage when it expires its time. 
 
@@ -73,18 +77,48 @@ export const createUserThunk = ({ showMessage, navigate }: Props):AppThunk => {
     
     return async ( dispatch ) => {
         try {
-            const { data } = await api.post<IAuth>('/users')
+            const { data } = await api.post<IAuth>('/users', form)
             dispatch(setCreateUser( data ));
 
-            console.log('vamos a ver si work well', data)
-            localStorage.setItem('bootcam-token', data.token);
+            Cookies.set('token', data.token);
             showMessage(data.msg, 'success');
             navigate('/')
 
-        } catch (error) {
+        } catch (error: any) {
+            Cookies.remove('token')
+            console.log(error);
+            console.log('Something went wront, contact your admin', error);    
             
-            console.log(error)
-            console.log('Something went wront, contact your admin', error)       
+            if (error.message === 'Network Error') {
+
+                dispatch(setError({
+                    isError: true,
+                    message: error.message,
+                    status: 500,
+                    statusText: 'Server is down. Contact your admin'
+                }));
+
+                showMessage(`Error: ${ 500 }: ${error.message}`, 'error')
+                               
+            } else {
+
+                dispatch(setError({
+                    isError: true,
+                    message: 'Error just happened',
+                    status: error.response.status,
+                    statusText: error.message
+                }));
+
+                dispatch(setLogout({
+                    msg: 'Logged out successfully',
+                    ok: false,
+                    token: ''
+                }));
+                
+                error.response.data.forEach((el:any) => {
+                    showMessage(`Error: ${error.response.status}: ${el.msg}`, 'error')
+                });
+            }
         }
 
     }
