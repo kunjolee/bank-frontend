@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom'
+import { Box } from '@mui/material';
 import Cookies from 'js-cookie';
 import { api } from "../api/axios";
 import { useAppSelector } from "../store"
@@ -7,6 +8,8 @@ import { useAppDispatch } from '../store/hooks';
 
 import { IAuth } from '../interfaces';
 import { setLogin } from '../store/slices/auth';
+import Navbar from './ui/Navbar';
+import { Sidebar } from './ui';
 
 const PrivateRouter = ( ) => {
 
@@ -34,10 +37,16 @@ const PrivateRouter = ( ) => {
   }, []);
 
 
-  if ( auth === null) return;
+  if ( auth === null) return null;
 
   return auth?.ok  ? (
-    <Outlet />
+    <>
+      <Navbar/>
+      <Sidebar/>
+      <main style={{paddingTop: '7rem', maxWidth: '80%', margin: '0 auto'}}>
+        <Outlet />
+      </main>
+    </>
     ) : (
     <Navigate to='/login' />
   )

@@ -11,6 +11,8 @@ function App() {
         <Routes>
           <Route element={ <PrivateRouter /> }>
             <Route path='/' element={ <Home />} />
+            <Route path='/history' element={ <Home />} />
+            <Route path='/dashboard' element={ <Home />} />
           </Route>
           <Route path='/login' element={ <Login/> } />
           <Route path='/create-user' element={ <CreateUser/> } />

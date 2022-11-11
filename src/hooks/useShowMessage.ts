@@ -10,7 +10,7 @@ export const useShowMessage = () => {
             autoHideDuration: 2000,
             anchorOrigin: {
                 vertical: 'top',
-                horizontal: 'left'
+                horizontal: 'right'
             }
         });
 

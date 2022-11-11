@@ -16,8 +16,13 @@ export const isValidEmail = (email: string): boolean => {
   }
 
   export const isNumberText = (text: string): string | undefined => {
-    return /^\d*\.?\d*$/.test(text)
+    return /^\d*\.?\d*$/.test(text) 
       ? undefined
-      : 'Should be just a number';
+      : 'Should be only a number';
   }
-  
+
+  export const isValidNumber = (text: string): string | undefined => {
+    return /^\d*\.?\d*$/.test(text) 
+      ? undefined
+      : 'Should be only a valid number';
+  }

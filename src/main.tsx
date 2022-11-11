@@ -11,7 +11,8 @@ import { store } from './store';
 
 import './main.css';
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
+  // <React.StrictMode>
+  <>
     <CssBaseline/>
     <ThemeProvider theme={ lightTheme } >
       <Provider store={ store }>
@@ -20,5 +21,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         </SnackbarProvider>
       </Provider>
     </ThemeProvider>
- </React.StrictMode>
+  </>
+//  </React.StrictMode>
 )

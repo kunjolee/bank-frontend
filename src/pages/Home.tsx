@@ -1,23 +1,20 @@
-import Cookies from 'js-cookie';
+import { Grid } from '@mui/material';
 import { useAppDispatch } from '../store/hooks';
-import { setLogout } from '../store/slices/auth';
+
+import { Accounts, Movements } from '../components';
 const Home = () => {
 
   const dispatch = useAppDispatch();
 
   return (
-    <div>
-      <h1>You should join here</h1>
-      <button onClick={() => {
-        dispatch(setLogout({
-          ok: false,
-          token: '',
-          msg: 'Logged out successfully'
-        }));
-
-        Cookies.remove('token');
-      }}>Logout</button>
-    </div>
+    <Grid container height='80vh'>
+        <Grid  item xs={12} sm={12} md={6}>
+          <Accounts/>
+        </Grid>
+        <Grid  item xs={12} sm={12} md={6}>
+          <Movements/>
+        </Grid>
+    </Grid>
   )
 }
 export default Home;

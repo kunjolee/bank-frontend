@@ -11,7 +11,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useShowMessage } from '../hooks';
 import { IAuth, CreateUserForm } from '../interfaces';
 import { useAppDispatch } from '../store';
-import { createUserThunk, setLogin } from '../store/slices/auth';
+import { setLogin } from '../store/slices/auth';
 import { isEmail, isNumberText } from '../utils';
 import { api } from '../api/axios';
 
@@ -82,9 +82,9 @@ const CreateUser = () => {
             size='small'
             color='secondary'
             sx={{ height: 50}}
-            onClick={ () => navigate('/') }
+            onClick={ () => navigate('/login') }
           >
-              Salir
+              Back
               <ArrowForwardIosIcon />
           </IconButton>
         </Box>

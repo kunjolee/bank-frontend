@@ -1,11 +1,13 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import { authSlice } from './slices/auth';
 import { errorSlice } from './slices/error';
+import { uiSlice } from './slices/ui/';
 
 export const store = configureStore({
     reducer: {
         auth: authSlice.reducer,
-        error: errorSlice.reducer
+        error: errorSlice.reducer,
+        isOpenMenu: uiSlice.reducer
     }
 });
 

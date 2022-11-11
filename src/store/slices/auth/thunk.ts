@@ -69,11 +69,8 @@ export const authLogin = ({ form, navigate, showMessage }: Props): AppThunk => {
 
 
 export const createUserThunk = ({ showMessage, navigate, form }: Props):AppThunk => {
-    // TODO: make this work, the createUser. now i have to validate the JWT
-    // in the localstorage there is the token, now i have to validate that the token is removed from the local storage when it expires its time. 
-
-    // Make validations such as the username, pass, etc,should be always required and the email can't be repeated
-    // I have to validate with a regex that the user is valid
+    
+    // TODO: I have to validate with a regex that the user is valid
     
     return async ( dispatch ) => {
         try {
