@@ -30,19 +30,24 @@ const ExpenseIncome = () => {
 
     try {
 
-      await api.post('/movements', {
-        ...form,
+
+      const { data } = await api.put('/accounts/balance',{
+        type: form.type ,
+        amount: Number(form.amount),
+        idAccount: Number(form.idAccount)
       });
 
-      showMessage('Account created successfully!', 'success');
-      reset();
+      if (data.ok) {
+        await api.post('/movements', { ...form })
+        showMessage('Movement created successfully!', 'success');
+        reset();
+      } else {
+        showMessage(data.msg, 'error');
+      }
+        
 
     } catch (error: any) {
-
-      error.response.data.error.errors.forEach((el:any)=>{
-        console.log('el', el)
-        showMessage(el.message, 'error')
-      })
+        showMessage('Error making a movement. Contact your admin', 'error')
 
     }finally{
       setLoading( false );
@@ -55,7 +60,10 @@ const ExpenseIncome = () => {
       try {
         const { data } = await api.get('/accounts');
         setAccounts( data );
-        setSelectAccounts(data[0].id)
+        if(data.length > 0){
+
+          setSelectAccounts(data[0].id)
+        }
         
       } catch (error) {
         console.log('Error getting the users account',error)
@@ -71,7 +79,9 @@ const ExpenseIncome = () => {
       try {
         const { data } = await api.get('/categories');
         setCategories( data );
+
         setSelectCategories(data[0].id);
+
 
       } catch (error) {
         console.log('Error getting categories in Movements',error);
@@ -219,9 +229,11 @@ const ExpenseIncome = () => {
             </form>
           </Box>
         ) : (
-          <Typography>
-            You don't have an account yet
-          </Typography>
+          <Box display='flex' p={'3rem 2rem'} justifyContent='center'>
+            <Typography variant='h2'>
+              You don't have an account yet
+            </Typography>
+          </Box>
         )
       }
     </Box>
