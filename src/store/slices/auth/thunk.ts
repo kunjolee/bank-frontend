@@ -70,8 +70,6 @@ export const authLogin = ({ form, navigate, showMessage }: Props): AppThunk => {
 
 export const createUserThunk = ({ showMessage, navigate, form }: Props):AppThunk => {
     
-    // TODO: I have to validate with a regex that the user is valid
-    
     return async ( dispatch ) => {
         try {
             const { data } = await api.post<IAuth>('/users', form)

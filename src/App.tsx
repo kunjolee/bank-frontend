@@ -1,7 +1,7 @@
-import { Home, Login, Page404 } from "./pages"
+import { Home, Login, Page404 } from './pages'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom' 
-import { PrivateRouter } from "./components"
-import CreateUser from "./pages/CreateUser"
+import { Movements, PrivateRouter } from './components'
+import { CreateUser, History, Dashboard } from './pages/'
 
 function App() {
   return (
@@ -11,8 +11,9 @@ function App() {
         <Routes>
           <Route element={ <PrivateRouter /> }>
             <Route path='/' element={ <Home />} />
-            <Route path='/history' element={ <Home />} />
-            <Route path='/dashboard' element={ <Home />} />
+            <Route path='/history' element={ <History />} />
+            <Route path='/dashboard' element={ <Dashboard />} />
+            <Route path='/movements' element={ <Movements />} />
           </Route>
           <Route path='/login' element={ <Login/> } />
           <Route path='/create-user' element={ <CreateUser/> } />

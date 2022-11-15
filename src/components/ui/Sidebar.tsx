@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 
-import { CopyrightOutlined, ForumOutlined, GroupsOutlined, HomeOutlined, LogoutOutlined, PersonOutlined, TaskAltOutlined, AccountBalance } from '@mui/icons-material';
-import { Box, Drawer, List, ListItemIcon, CardMedia, Typography, ListItem, ListItemText, ListSubheader, Divider } from '@mui/material';
+import { Box, Drawer, List, ListItemIcon, Typography, ListItem, ListItemText, ListSubheader, Divider } from '@mui/material';
+
+import { CopyrightOutlined, GroupsOutlined, HomeOutlined, LogoutOutlined, PersonOutlined, AccountBalance, HistoryOutlined, TrendingUpOutlined, DashboardCustomizeOutlined } from '@mui/icons-material';
 
 import Cookies from 'js-cookie';
 
@@ -61,23 +62,33 @@ const Sidebar = () => {
                     </ListItem>
 
                     <ListItem button onClick={() => {
-                      navigate('/accounts')
+                      navigate('/history')
                       dispatch( setOpenMenu( false ) )
                     }}>
                       <ListItemIcon>
-                          <TaskAltOutlined />
+                          <HistoryOutlined />
                       </ListItemIcon>                    
-                      <ListItemText>My Accounts</ListItemText>
+                      <ListItemText>History</ListItemText>
                     </ListItem>
 
                     <ListItem button onClick={() => {
-                      navigate('/expense-income')
+                      navigate('/movements')
                       dispatch( setOpenMenu( false ) )
                     } }>
                         <ListItemIcon>
-                            <ForumOutlined />
+                            <TrendingUpOutlined />
                         </ListItemIcon>                    
-                        <ListItemText>Expenses - Income</ListItemText>
+                        <ListItemText>Movements</ListItemText>
+                    </ListItem>
+
+                    <ListItem button onClick={() => {
+                      navigate('/dashboard')
+                      dispatch( setOpenMenu( false ) )
+                    } }>
+                        <ListItemIcon>
+                            <DashboardCustomizeOutlined />
+                        </ListItemIcon>                    
+                        <ListItemText>Dashboard</ListItemText>
                     </ListItem>
 
                     <ListItem button onClick={ onLogOut }>

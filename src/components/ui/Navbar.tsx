@@ -25,11 +25,6 @@ const Navbar = () => {
                         </Box>
                     </Box>
                 </Link>
-                <Box flex={1}></Box>
-                <Link to='messages'>
-                    {/* <Button color=''>Messages</Button> */}
-                </Link>
-
             </Toolbar>
         </AppBar>
     )

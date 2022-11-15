@@ -11,8 +11,6 @@ import { CategoryOutlined, ShoppingCartCheckoutOutlined, SavingsOutlined, AddCom
 
 const ExpenseIncome = () => {
 
-  const { auth } = useAppSelector(state => state.auth)
-
   const { register, handleSubmit, formState: { errors }, reset } = useForm<IMovement>();
   const [loading, setLoading] = useState(false);
   const [selectMovement, setSelectMovement] = useState('EXPENSES');
@@ -90,7 +88,42 @@ const ExpenseIncome = () => {
 
     fetchCategories();
 
-  }, [])
+  }, []);useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const { data } = await api.get('/accounts');
+        setAccounts( data );
+        if(data.length > 0){
+
+          setSelectAccounts(data[0].id)
+        }
+        
+      } catch (error) {
+        console.log('Error getting the users account',error)
+      }
+    }
+
+    fetchAccounts();
+
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await api.get('/categories');
+        setCategories( data );
+
+        setSelectCategories(data[0].id);
+
+
+      } catch (error) {
+        console.log('Error getting categories in Movements',error);
+      }
+    }
+
+    fetchCategories();
+
+  }, []);
 
   return (
     <Box p={'3rem 2rem'}>

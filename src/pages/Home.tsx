@@ -8,12 +8,12 @@ const Home = () => {
 
   return (
     <Grid container height='80vh'>
-        <Grid  item xs={12} sm={12} md={6}>
+        <Grid  item xs={12}>
           <Accounts/>
         </Grid>
-        <Grid  item xs={12} sm={12} md={6}>
+        {/* <Grid  item xs={12} sm={12} md={6}>
           <Movements/>
-        </Grid>
+        </Grid> */}
     </Grid>
   )
 }
