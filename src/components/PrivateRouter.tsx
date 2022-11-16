@@ -43,7 +43,11 @@ const PrivateRouter = ( ) => {
     <>
       <Navbar/>
       <Sidebar/>
-      <main style={{paddingTop: '7rem', maxWidth: '80%', margin: '0 auto'}}>
+      <main style={{
+        padding: '8rem 0 0',
+        maxWidth: '80%',
+        margin: '0 auto',
+      }}>
         <Outlet />
       </main>
     </>

@@ -28,7 +28,6 @@ const ExpenseIncome = () => {
 
     try {
 
-
       const { data } = await api.put('/accounts/balance',{
         type: form.type ,
         amount: Number(form.amount),
@@ -76,7 +75,7 @@ const ExpenseIncome = () => {
     const fetchCategories = async () => {
       try {
         const { data } = await api.get('/categories');
-        setCategories( data );
+        setCategories( data.slice(0,6) );
 
         setSelectCategories(data[0].id);
 
@@ -88,7 +87,9 @@ const ExpenseIncome = () => {
 
     fetchCategories();
 
-  }, []);useEffect(() => {
+  }, []);
+
+  useEffect(() => {
     const fetchAccounts = async () => {
       try {
         const { data } = await api.get('/accounts');
@@ -107,23 +108,6 @@ const ExpenseIncome = () => {
 
   }, []);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const { data } = await api.get('/categories');
-        setCategories( data );
-
-        setSelectCategories(data[0].id);
-
-
-      } catch (error) {
-        console.log('Error getting categories in Movements',error);
-      }
-    }
-
-    fetchCategories();
-
-  }, []);
 
   return (
     <Box p={'3rem 2rem'}>

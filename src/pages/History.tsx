@@ -71,7 +71,6 @@ const History = () => {
         
         setIdCategory(data[0].id);
         
-        
       } catch (error) {
         console.log('Error getting categories in History',error);
       }
@@ -107,7 +106,7 @@ const History = () => {
   }
   
   return (
-    <>
+    <Box pb={'5rem'}>
       <h2>History</h2>
       <Grid container spacing={3} mb='2rem'>
         <Grid item xs={12} md={6}>
@@ -167,7 +166,6 @@ const History = () => {
               type='date'
               onChange={ handleChangeDate }
               value={ myDate }
-              label='Date'
             />
           </Box>
         </Grid>
@@ -192,14 +190,14 @@ const History = () => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} align={'center'}>Not have any movement in that filter</TableCell>
+                <TableCell colSpan={6} align={'center'}>Not have any movement in this filter</TableCell>
               </TableRow>
             ) 
            } 
           </TableBody>
         </Table>
       </TableContainer>      
-    </>
+    </Box>
   )
 }
 export default History

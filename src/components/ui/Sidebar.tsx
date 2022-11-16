@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Box, Drawer, List, ListItemIcon, Typography, ListItem, ListItemText, ListSubheader, Divider } from '@mui/material';
 
-import { CopyrightOutlined, GroupsOutlined, HomeOutlined, LogoutOutlined, PersonOutlined, AccountBalance, HistoryOutlined, TrendingUpOutlined, DashboardCustomizeOutlined } from '@mui/icons-material';
+import { CopyrightOutlined, GroupsOutlined, HomeOutlined, LogoutOutlined, PersonOutlined, AccountBalance, HistoryOutlined, TrendingUpOutlined, DashboardCustomizeOutlined, TransferWithinAStationOutlined } from '@mui/icons-material';
 
 import Cookies from 'js-cookie';
 
@@ -43,9 +43,9 @@ const Sidebar = () => {
                 <List sx={{ display: 'flex', flexDirection: 'column', height: '100%'}}>
                     <Box display='flex' alignItems='center' my={2}>                    
                         <Box display='flex' alignItems='center' >
-                        <AccountBalance color='primary' sx={{ fontSize: 100}} />
+                        <AccountBalance color='primary' sx={{ fontSize: 80}} />
                         <Box ml={2}>
-                            <Typography color='primary' variant='h1' sx={{ fontSize: 38}}>DSU</Typography>
+                            <Typography color='primary' variant='h1' sx={{ fontSize: 28}}>DSU</Typography>
                             <Typography color='primary' variant='subtitle2'>W2-BANK</Typography>
                         </Box>
                     </Box>
@@ -62,6 +62,16 @@ const Sidebar = () => {
                     </ListItem>
 
                     <ListItem button onClick={() => {
+                      navigate('/movements')
+                      dispatch( setOpenMenu( false ) )
+                    } }>
+                        <ListItemIcon>
+                            <TrendingUpOutlined />
+                        </ListItemIcon>                    
+                        <ListItemText>Movements</ListItemText>
+                    </ListItem>
+
+                    <ListItem button onClick={() => {
                       navigate('/history')
                       dispatch( setOpenMenu( false ) )
                     }}>
@@ -72,13 +82,13 @@ const Sidebar = () => {
                     </ListItem>
 
                     <ListItem button onClick={() => {
-                      navigate('/movements')
+                      navigate('/transfers')
                       dispatch( setOpenMenu( false ) )
-                    } }>
-                        <ListItemIcon>
-                            <TrendingUpOutlined />
-                        </ListItemIcon>                    
-                        <ListItemText>Movements</ListItemText>
+                    }}>
+                      <ListItemIcon>
+                          <TransferWithinAStationOutlined />
+                      </ListItemIcon>                    
+                      <ListItemText>Transfers</ListItemText>
                     </ListItem>
 
                     <ListItem button onClick={() => {
