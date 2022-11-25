@@ -2,21 +2,11 @@ import { ChangeEvent, useEffect, useState } from 'react';
 
 import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper, Grid, TextField, Box, MenuItem, Button, InputAdornment, Typography } from '@mui/material';
 
-import { useForm } from 'react-hook-form';
 import { api } from '../api/axios';
 import { CategoryOutlined } from '@mui/icons-material';
 import { HistoryRow } from '../components';
 
 const History = () => {
-  // TODO: por default va a mostrar todos los movimientos por cada cuenta, de un usuario
-  // El filtrar por cuenta significa que solo va a mostrar los movimientos de una cuenta
-  // Cuando le de filtrar por categoria va a bloquear account select y date select. y si le doy filtrar por date va a bloquear account select y cateory select y asi lo mismo con todas. para dar a entender que solo estoy filtrando por 1 tipo de select
-  // Hacer paginacion
-  
-
-  // TODO2: Obtener accounts by user
-  // TODO3: Obtener categories 
-
 
   const [categories, setCategories] = useState([]);
   const [accounts, setAccounts] = useState([]);
@@ -31,13 +21,12 @@ const History = () => {
     const apiFetch = async () => {
       try {
         const { data } = await api.get(`/movements?idAccount=${idAccount}`)
-        
         setHistory(data)
         
       } catch (error) {
+        
         console.log('Error loading history by accounts',error)
       }
-      
     }
 
     apiFetch()
@@ -180,6 +169,7 @@ const History = () => {
               <TableCell>Amount</TableCell>
               <TableCell>Category</TableCell>
               <TableCell>Date</TableCell>
+              <TableCell>Currency</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -190,7 +180,7 @@ const History = () => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} align={'center'}>Not have any movement in this filter</TableCell>
+                <TableCell colSpan={7} align={'center'}>Not have any movement in this filter</TableCell>
               </TableRow>
             ) 
            } 

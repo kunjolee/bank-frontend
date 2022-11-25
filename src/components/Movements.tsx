@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import { IMovement } from '../interfaces';
 import { isValidNumber } from '../utils';
 import { api } from '../api/axios';
-import { useAppSelector } from '../store';
 import { useShowMessage } from '../hooks/useShowMessage';
 import { CategoryOutlined, ShoppingCartCheckoutOutlined, SavingsOutlined, AddCommentOutlined } from '@mui/icons-material';
 
@@ -17,25 +16,38 @@ const ExpenseIncome = () => {
 
   const [categories, setCategories] = useState([]);
   const [accounts, setAccounts] = useState([]);
+  const [currencies, setCurrencies] = useState([]);
+
   const [selectAccounts, setSelectAccounts] = useState("0");
   const [selectCategories, setSelectCategories] = useState("0");
 
+  const [selectCurrencies, setSelectCurrencies] = useState(0);
 
   const showMessage = useShowMessage()
 
   const onSave = async (form: IMovement) => {
-    setLoading(true)
+    let amount
+
+    if (Number(form.idCurrency) === 2) {
+      amount = Number(form.amount)
+    } else if (Number(form.idCurrency) === 3) {
+      amount = Number(form.amount) * 7.5;
+    } else if (Number(form.idCurrency) === 4){
+      amount = Number(form.amount) * 8.08;
+    }
 
     try {
-
+      
       const { data } = await api.put('/accounts/balance',{
         type: form.type ,
-        amount: Number(form.amount),
-        idAccount: Number(form.idAccount)
+        amount,
+        idAccount: Number(form.idAccount),
+        idCurrency: Number(form.idCurrency)
       });
 
+
       if (data.ok) {
-        await api.post('/movements', { ...form })
+        await api.post('/movements', { ...form, idCurrency: Number(form.idCurrency) })
         showMessage('Movement created successfully!', 'success');
         reset();
       } else {
@@ -106,6 +118,24 @@ const ExpenseIncome = () => {
 
     fetchAccounts();
 
+  }, []);
+
+  useEffect(() => {
+    const fetchCurrencies = async () => {
+      try {
+        const { data } = await api.get('/currency');
+        setCurrencies( data );
+        if(data.length > 0){
+
+          setSelectCurrencies(data[0].id)
+        }
+        
+      } catch (error) {
+        console.log('Error getting the users account',error)
+      }
+    }
+    
+    fetchCurrencies()
   }, []);
 
 
@@ -238,9 +268,33 @@ const ExpenseIncome = () => {
                           <MenuItem key={el.id} value={el.id}>{el.accountNumber}</MenuItem>
                         ))
                       }
-                  </TextField>  
+                  </TextField>
+                  {
+                  currencies.length > 0 && (
+                    <TextField
+                      select
+                      fullWidth
+                      label='Currencies'
+                      sx={{mb: '1rem'}}
+                      {...register('idCurrency', {
+                        required: 'Currency required'
+                      })}
+                      value={selectCurrencies}
+                      onChange={(e) => {
+                        setSelectCurrencies(Number(e.target.value))
+                      }}
+                    >
+                      {
+                        currencies.map((el:any) => (
+                          <MenuItem key={el.id} value={el.id}>{el.currencyType}</MenuItem>
+                        ))
+                      }
+                  </TextField>
+                  )
+                }  
                 </Grid>
               </Grid> 
+              
               <Button fullWidth color='success' type='submit' >CREATE MOVEMENT</Button>
               <CircularProgress sx={{ display: loading ? 'flex' : 'none' }}/>
             </form>

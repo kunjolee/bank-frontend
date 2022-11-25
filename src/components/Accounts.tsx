@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { TextField, Button, CircularProgress, MenuItem, Box, InputAdornment  } from '@mui/material';
 import { AccountBalanceOutlined, AccountBoxOutlined, CurrencyBitcoinOutlined, FingerprintOutlined } from '@mui/icons-material';
@@ -7,7 +7,6 @@ import {  useForm } from 'react-hook-form';
 import { api } from '../api/axios';
 import { useShowMessage } from '../hooks';
 import { IAccounts } from '../interfaces/';
-import { useAppSelector } from '../store';
 
 import { isValidNumber } from '../utils';
 
@@ -16,12 +15,8 @@ const Accounts = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<IAccounts>();
   const [loading, setLoading] = useState(false);
 
-  const [currencies, setCurrencies] = useState([]);
 
   const [selectDeposit, setSelectDeposit] = useState('RECURRING');
-  const [selectCurrencies, setSelectCurrencies] = useState(2);
-
-  const { auth } = useAppSelector(state => state.auth)
 
   const showMessage = useShowMessage();
 
@@ -31,8 +26,8 @@ const Accounts = () => {
     try {
       await api.post('/accounts', {
         ...form,
+        idCurrency: 2
       });
-
     
       showMessage('Account created successfully!', 'success')
       reset()
@@ -48,20 +43,6 @@ const Accounts = () => {
   }
 
 
-  useEffect(() => {
-
-    const fetchApi = async () => {
-      try {
-        const { data } = await api.get('/currency')
-
-        setCurrencies(data)
-      } catch (error) {
-        console.log('Error getting currencies', error)
-      }
-    }
-
-    fetchApi()
-  }, []);
 
   return (
     <Box p={'3rem 2rem'}>
@@ -143,8 +124,17 @@ const Accounts = () => {
             >
             <MenuItem value={'RECURRING'}>Recurring</MenuItem>
             <MenuItem value={'SAVINGS'}>Savings</MenuItem>
-          </TextField>
-          {
+          </TextField>          
+          <Button fullWidth color='success' type='submit' >CREATE ACCOUNT</Button>
+          <CircularProgress sx={{ display: loading ? 'flex' : 'none' }}/>
+        </form>
+    </Box>
+  )
+}
+export default Accounts
+
+
+{/* {
             currencies.length > 0 && (
               <TextField
               select
@@ -169,11 +159,4 @@ const Accounts = () => {
                 }
               </TextField>
             )
-          }
-          <Button fullWidth color='success' type='submit' >CREATE ACCOUNT</Button>
-          <CircularProgress sx={{ display: loading ? 'flex' : 'none' }}/>
-        </form>
-    </Box>
-  )
-}
-export default Accounts
+          } */}

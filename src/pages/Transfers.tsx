@@ -1,5 +1,5 @@
 import { AddCommentOutlined, ShoppingCartCheckoutOutlined } from '@mui/icons-material';
-import { Box, Button, InputAdornment, MenuItem, TextField } from '@mui/material'
+import { Box, Button, InputAdornment, MenuItem, TextField, Typography } from '@mui/material'
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { isValidNumber } from '../utils';
@@ -11,15 +11,17 @@ export interface ITransfer {
   amount: number,
   idAccountOrigin: number,
   acountNumber: string,
-  currency: 'quetzal' | 'dollar' | 'euro'
+  idCurrency: number
 }
 
 const Transfers = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<ITransfer>();
 
   const [accounts, setAccounts] = useState([]);
+  const [currencies, setCurrencies] = useState([]);
+
   const [selectAccounts, setSelectAccounts] = useState('0');
-  const [selectCurrency, setSelectCurrency] = useState('quetzal');
+  const [selectCurrency, setSelectCurrency] = useState(0);
 
   const showMessage = useShowMessage()
 
@@ -42,8 +44,27 @@ const Transfers = () => {
 
   }, []);
 
-  const onSave = async (form: ITransfer) => {
+  useEffect(() => {
+    const fetchCurrencies = async () => {
+      try {
+        const { data } = await api.get('/currency');
+        setCurrencies( data );
+        if(data.length > 0){
 
+         
+          setSelectCurrency(data[0].id)
+        }
+        
+      } catch (error) {
+        console.log('Error getting the users account',error)
+      }
+    }
+
+    fetchCurrencies();
+
+  }, []);
+
+  const onSave = async (form: ITransfer) => {
     let dd = String(new Date().getDate()).padStart(2, '0');
     let mm = String(new Date().getMonth() + 1).padStart(2, '0'); //January is 0!
     let yyyy = new Date().getFullYear();
@@ -52,23 +73,22 @@ const Transfers = () => {
     
     let amount
 
-    if (form.currency === 'dollar') {
+    if (Number(form.idCurrency) === 3) {
       amount = Number(form.amount) * 7.5;
-    }else if (form.currency === 'euro') {
+    }else if (Number(form.idCurrency) === 4) {
       amount = Number(form.amount) * 8.08;
 
-    }else if (form.currency === 'quetzal') {
+    }else if (Number(form.idCurrency) === 2) {
       amount = Number(form.amount)
     }
     
-
     try {
       
       const { data: dataOrigin } = await api.put('/accounts/balance',{
         type: 'EXPENSES' ,
         amount,
         idAccount: Number(form.idAccountOrigin),
-        typeUpdate: 'transferExpense'
+        typeUpdate: 'transferExpense',
       });
 
       if (dataOrigin.ok) {
@@ -80,20 +100,22 @@ const Transfers = () => {
 
           const payloadDestination = {  
             description: form.description,
-            amount: form.amount,
+            amount,
             type: 'INCOME',
             myDate,
             idCategory: 8,
-            idAccount: form.idAccountOrigin
+            idAccount: form.idAccountOrigin,
+            idCurrency: Number(form.idCurrency) 
           }
           
           const payloadOrigin = {
             description: form.description,
-            amount: form.amount,
+            amount,
             type: 'EXPENSES',
             myDate,
             idCategory: 8,
-            idAccount: form.idAccountOrigin
+            idAccount: form.idAccountOrigin,
+            idCurrency: Number(form.idCurrency) 
           }
 
           await api.post('/movements', payloadOrigin)
@@ -116,7 +138,7 @@ const Transfers = () => {
 
   }
 
-  return (
+  return accounts.length > 0 ? (
     <Box p={'3rem 2rem'}>
       <h2>Transfers</h2>
       <form onSubmit={handleSubmit(onSave)}>
@@ -169,6 +191,7 @@ const Transfers = () => {
                 value: 10,
                 message: 'maximum of 10 characters'
               },
+              validate: isValidNumber
             })}
             error={ !!errors.acountNumber }
             helperText={ errors.acountNumber?.message }
@@ -181,49 +204,58 @@ const Transfers = () => {
               ),
             }}
           /> 
-          {
-            accounts.length > 0 && (
+    
+          <TextField
+            select
+            fullWidth
+            label='Your accounts'
+            sx={{mb: '1rem'}}
+            {...register('idAccountOrigin', {
+              required: 'account required'
+            })}
+            value={selectAccounts}
+            onChange={(e) => {
+              setSelectAccounts(e.target.value)
+            }}
+          >
+            {
+              accounts.map((el:any) => (
+                <MenuItem key={el.id} value={el.id}>{el.accountNumber}</MenuItem>
+              ))
+            }
+        </TextField>
+        {
+          currencies.length > 0 && (
             <TextField
               select
               fullWidth
-              label='Your accounts'
+              label='Currencies'
               sx={{mb: '1rem'}}
-              {...register('idAccountOrigin', {
-                required: 'account required'
+              {...register('idCurrency', {
+                required: 'Currency required'
               })}
-              value={selectAccounts}
+              value={selectCurrency}
               onChange={(e) => {
-                setSelectAccounts(e.target.value)
+                setSelectCurrency(Number(e.target.value))
               }}
             >
               {
-                accounts.map((el:any) => (
-                  <MenuItem key={el.id} value={el.id}>{el.accountNumber}</MenuItem>
+                currencies.map((el:any) => (
+                  <MenuItem key={el.id} value={el.id}>{el.currencyType}</MenuItem>
                 ))
               }
           </TextField>
           )
         }
-        <TextField
-          select
-          fullWidth
-          label='Type of currency'
-          sx={{mb: '1rem'}}
-          {...register('currency', {
-            required: 'currency required'
-          })}
-          value={selectCurrency}
-          onChange={(e) => {
-            setSelectCurrency(e.target.value)
-          }}
-            >
-              <MenuItem value={'quetzal'}>Quetzal</MenuItem>
-              <MenuItem value={'dollar'}>Dollar</MenuItem>
-              <MenuItem value={'euro'}>Euro</MenuItem>
-          </TextField>
-        <Button fullWidth color='success' type='submit' >CREATE MOVEMENT</Button> 
+      <Button fullWidth color='success' type='submit' >CREATE MOVEMENT</Button> 
       </form>
     </Box>
+  ):(
+    <Box display='flex' p={'3rem 2rem'} justifyContent='center'>
+        <Typography variant='h2'>
+          You don't have an account yet
+        </Typography>
+      </Box>
   )
 }
 export default Transfers

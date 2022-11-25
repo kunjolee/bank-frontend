@@ -6,7 +6,7 @@ interface Props {
 
 const HistoryRow = ({ history }: Props) => {
 
-    const { id, description, type: movement, amount, category, myDate } = history;
+    const { id, description, type: movement, amount, category, myDate, Currency } = history;
     
     return (
     <TableRow>              
@@ -16,6 +16,7 @@ const HistoryRow = ({ history }: Props) => {
         <TableCell>{ amount }</TableCell>
         <TableCell>{ category }</TableCell>
         <TableCell>{ myDate }</TableCell>
+        <TableCell>{ Currency }</TableCell>
     </TableRow>
   )
 }
