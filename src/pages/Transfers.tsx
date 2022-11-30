@@ -73,15 +73,16 @@ const Transfers = () => {
     
     let amount
 
-    if (Number(form.idCurrency) === 3) {
-      amount = Number(form.amount) * 7.5;
-    }else if (Number(form.idCurrency) === 4) {
-      amount = Number(form.amount) * 8.08;
+    if (Number(form.idCurrency) === 1) {
+      amount = Number(form.amount);
 
     }else if (Number(form.idCurrency) === 2) {
-      amount = Number(form.amount)
+      amount = Number(form.amount) * 7.5;
+
+    }else if (Number(form.idCurrency) === 3) {
+      amount = Number(form.amount) * 8.08;
     }
-    
+
     try {
       
       const { data: dataOrigin } = await api.put('/accounts/balance',{
@@ -117,7 +118,7 @@ const Transfers = () => {
             idAccount: form.idAccountOrigin,
             idCurrency: Number(form.idCurrency) 
           }
-
+          
           await api.post('/movements', payloadOrigin)
           await api.post(`/movements/${form.acountNumber}`, payloadDestination)
           showMessage('Transfer created successfully!', 'success');

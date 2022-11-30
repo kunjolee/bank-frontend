@@ -28,11 +28,11 @@ const ExpenseIncome = () => {
   const onSave = async (form: IMovement) => {
     let amount
 
-    if (Number(form.idCurrency) === 2) {
+    if (Number(form.idCurrency) === 1) {
       amount = Number(form.amount)
-    } else if (Number(form.idCurrency) === 3) {
+    } else if (Number(form.idCurrency) === 2) {
       amount = Number(form.amount) * 7.5;
-    } else if (Number(form.idCurrency) === 4){
+    } else if (Number(form.idCurrency) === 3){
       amount = Number(form.amount) * 8.08;
     }
 
